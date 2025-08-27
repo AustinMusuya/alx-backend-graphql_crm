@@ -5,6 +5,7 @@ from graphene import relay
 import graphene
 from graphene_django import DjangoObjectType
 from .models import Customer, Product, Order
+from crm.models import Product
 from graphene_django.filter import DjangoFilterConnectionField
 from .filters import CustomerFilter, ProductFilter, OrderFilter
 
@@ -170,9 +171,12 @@ class CreateOrder(graphene.Mutation):
 # Query & Mutation Root
 # --------------------
 class Query(graphene.ObjectType):
-    all_customers = DjangoFilterConnectionField(CustomerType, filterset_class=CustomerFilter, order_by=graphene.List(of_type=graphene.String))
-    all_products = DjangoFilterConnectionField(ProductType, filterset_class=ProductFilter, order_by=graphene.List(of_type=graphene.String))
-    all_orders = DjangoFilterConnectionField(OrderType, filterset_class=OrderFilter, order_by=graphene.List(of_type=graphene.String))
+    all_customers = DjangoFilterConnectionField(
+        CustomerType, filterset_class=CustomerFilter, order_by=graphene.List(of_type=graphene.String))
+    all_products = DjangoFilterConnectionField(
+        ProductType, filterset_class=ProductFilter, order_by=graphene.List(of_type=graphene.String))
+    all_orders = DjangoFilterConnectionField(
+        OrderType, filterset_class=OrderFilter, order_by=graphene.List(of_type=graphene.String))
 
     def resolve_all_customers(self, info, order_by=None, **kwargs):
         qs = Customer.objects.all()

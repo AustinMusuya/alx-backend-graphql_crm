@@ -34,3 +34,23 @@ def log_crm_heartbeat():
     except Exception as e:
         with open(log_file, "a") as f:
             f.write(f"{timestamp} GraphQL hello check ERROR: {e}\n")
+
+
+def updatelowstock():
+    # call the mutation
+    mutation = """
+    mutation {
+        updateLowStockProducts {
+            success
+            updatedProducts {
+                id
+                name
+                stock
+            }
+        }
+    }
+    """
+
+    # log file must be exactly this path
+    with open("/tmp/lowstockupdates_log.txt", "a") as log:
+        log.write("some log message...\n")
