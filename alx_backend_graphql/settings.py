@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'crm.apps.CrmConfig',
     'graphene_django',
     'django_filters',
+    'django_celery_beat',
 ]
 
 GRAPHENE = {
