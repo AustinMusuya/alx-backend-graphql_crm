@@ -52,5 +52,5 @@ def updatelowstock():
     """
 
     # log file must be exactly this path
-    with open("/tmp/lowstockupdates_log.txt", "a") as log:
+    with open("/tmp/low_stock_updates_log.txt", "a") as log:
         log.write("some log message...\n")
