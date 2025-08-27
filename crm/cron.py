@@ -1,29 +1,36 @@
-import os
 from datetime import datetime
-import requests
+from gql import gql, Client
+from gql.transport.requests import RequestsHTTPTransport
 
 
 def log_crm_heartbeat():
     timestamp = datetime.now().strftime("%d/%m/%Y-%H:%M:%S")
-    message = f"{timestamp} CRM is alive"
-
     log_file = "/tmp/crm_heartbeat_log.txt"
-    with open(log_file, "a") as f:
-        f.write(message + "\n")
 
-    # Optional GraphQL hello check
+    # Always log basic heartbeat
+    with open(log_file, "a") as f:
+        f.write(f"{timestamp} CRM is alive\n")
+
+    # Optional GraphQL hello check (using gql + Client as required)
     try:
-        response = requests.post(
-            "http://localhost:8000/graphql",
-            json={"query": "{ hello }"},
-            timeout=5
+        transport = RequestsHTTPTransport(
+            url="http://localhost:8000/graphql",
+            verify=False,
+            retries=3,
         )
-        if response.status_code == 200 and "hello" in response.text:
+        client = Client(transport=transport, fetch_schema_from_transport=True)
+
+        query = gql("{ hello }")
+        result = client.execute(query)
+
+        if "hello" in result:
             with open(log_file, "a") as f:
-                f.write(f"{timestamp} GraphQL hello check OK\n")
+                f.write(
+                    f"{timestamp} GraphQL hello check OK: {result['hello']}\n")
         else:
             with open(log_file, "a") as f:
                 f.write(f"{timestamp} GraphQL hello check FAILED\n")
+
     except Exception as e:
         with open(log_file, "a") as f:
             f.write(f"{timestamp} GraphQL hello check ERROR: {e}\n")
